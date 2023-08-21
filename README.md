@@ -38,7 +38,7 @@ use the follwing code into your form
     }
 </script>
 ```
-## Method 1: Using Client Library
+## Create assesment(Method 1): Using Client Library
 ### Download Client Library
 Use the following command and download the Google client library into your project folder (e.g. theme folder)
 ```php
@@ -111,4 +111,46 @@ create_assessment(
  	'PROJECT_ID'
 );
 ```
-## Method 2: Using REST API
+## Create assesment(Method 2): Using REST API
+use the following code at functions.php
+```php
+$PROJECT_ID = 'PROJECT_ID';
+$API_KEY = 'API_KE';
+$SITE_KEY = 'SITE_KEY';
+$TOKEN = 'TOKEN'; // generated at frontend
+$URL = 'https://recaptchaenterprise.googleapis.com/v1/projects/' .$PROJECT_ID. '/assessments?key=' .$API_KEY;
+
+// Create a new cURL resource
+$ch = curl_init();
+// Set the URL
+curl_setopt($ch, CURLOPT_URL, $URL);
+// Set the request type to POST
+curl_setopt($ch, CURLOPT_POST, 1);
+// Set the JSON data
+$jsonData = json_encode(array(
+	"event" => array(
+		"token" => $TOKEN,
+		"siteKey" => $SITE_KEY,
+		"expectedAction" => "ACTION_NAME"
+	)
+));
+curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+// Set the headers
+$headers = array(
+	"Content-Type: application/json",
+	"Content-Length: " . strlen($jsonData)
+);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+// Return the response as a string instead of outputting it directly
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+// Execute the cURL request
+$response = curl_exec($ch);
+// Check for errors and handle the response
+if(curl_errno($ch)) {
+	echo "cURL Error: " . curl_error($ch);
+} else {
+	echo "Response: " . $response;
+}
+// Close the cURL session
+curl_close($ch);
+```
